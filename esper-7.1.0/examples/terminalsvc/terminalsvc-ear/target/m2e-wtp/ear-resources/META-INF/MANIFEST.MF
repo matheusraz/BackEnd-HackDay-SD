@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Build-Jdk: 10.0.1
+Built-By: EsperTech
+Created-By: Maven Integration for Eclipse
+

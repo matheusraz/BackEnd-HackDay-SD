@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory">Chapter 2. Basic Concepts</title><link rel="stylesheet" href="css/espertech.css" type="text/css"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" name="generator" content="DocBook XSL-NS Stylesheets V1.74.0"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" http-equiv="Content-Type" content="text/html; charset=UTF-8"/><link rel="home" href="index.html" title="Esper Reference"/><link rel="up" href="index.html" title="Esper Reference"/><link rel="prev" href="gettingstarted.html" title="Chapter 1. Getting Started"/><link rel="next" href="event_representation.html" title="Chapter 3. Event Representations"/></head><body><p xmlns:d="http://docbook.org/ns/docbook" id="title"><a href="http://www.espertech.com" class="site_href"><strong>www.espertech.com</strong></a><a href="http://www.espertech.com/esper/documentation.php" class="doc_href"><strong>Documentation</strong></a></p><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="gettingstarted.html"><strong>Prev</strong></a></li><li class="next"><a accesskey="n" href="event_representation.html"><strong>Next</strong></a></li></ul><div class="chapter" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel"/>Chapter 2. Basic Concepts</h2></div></div></div><div class="toc"><dl><dt><span class="sect1"><a href="processingmodel.html#processingmodel_intro">2.1. Introduction</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicselect">2.2. Basic Select</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicaggregation">2.3. Basic Aggregation</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicfilter">2.4. Basic Filter</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicfilterwithagg">2.5. Basic Filter and Aggregation</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicwindow">2.6. Basic Data Window</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicwindowagg">2.7. Basic Data Window and Aggregation</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicfilterwindowagg">2.8. Basic Filter, Data Window and Aggregation</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicwhereclause">2.9. Basic Where-Clause</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basictimewindow">2.10. Basic Time Window and Aggregation</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicpartition">2.11. Basic Partitioned Query</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicoutputlimited">2.12. Basic Output-Rate-Limited Query</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_basicpartitionedandoutputlimited">2.13. Basic Partitioned and Output-Rate-Limited Query</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_namedwindows">2.14. Basic Named Windows and Tables</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_aggregation">2.15. Basic Aggregated Query Types</a></span></dt><dd><dl><dt><span class="sect2"><a href="processingmodel.html#processingmodel_aggregation_batch_unagg">2.15.1. Un-Aggregated and Un-Grouped</a></span></dt><dt><span class="sect2"><a href="processingmodel.html#processingmodel_aggregation_batch_full_agg">2.15.2. Fully Aggregated and Un-Grouped</a></span></dt><dt><span class="sect2"><a href="processingmodel.html#processingmodel_aggregation_batch_event_agg">2.15.3. Aggregated and Un-Grouped</a></span></dt><dt><span class="sect2"><a href="processingmodel.html#processingmodel_aggregation_batch_group_agg">2.15.4. Fully Aggregated and Grouped</a></span></dt><dt><span class="sect2"><a href="processingmodel.html#processingmodel_aggregation_batch_event_agg_group">2.15.5. Aggregated and Grouped</a></span></dt></dl></dd><dt><span class="sect1"><a href="processingmodel.html#processingmodel_matchrecognizepattern">2.16. Basic Match-Recognize Patterns</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_eplpattern">2.17. Basic EPL Patterns</a></span></dt><dt><span class="sect1"><a href="processingmodel.html#processingmodel_indexes">2.18. Basic Indexes</a></span></dt><dd><dl><dt><span class="sect2"><a href="processingmodel.html#processingmodel_indexes_kinds">2.18.1. Index Kinds</a></span></dt><dt><span class="sect2"><a href="processingmodel.html#processingmodel_indexes_filterindexes">2.18.2. Filter Indexes</a></span></dt><dt><span class="sect2"><a href="processingmodel.html#processingmodel_indexes_eventindexes">2.18.3. Event Indexes</a></span></dt></dl></dd><dt><span class="sect1"><a href="processingmodel.html#processingmodel_3valuedlogic">2.19. Basic Null</a></span></dt></dl></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_intro"/>2.1. Introduction</h2></div></div></div><p>
+			For NEsper .NET also see <a class="xref" href="appendix_dotnet.html#appendix_dotnet_processingmodel_intro" title="I.11. .NET Basic Concepts">Section I.11, “.NET Basic Concepts”</a>.
+		</p><p>
+			Esper is a container for EPL queries. EPL queries are continuous query statements that analyze events and time and that detect situations. Esper contains the EPL queries as it manages their lifecycle and execution.
+		</p><p>
+			You interact with Esper by managing EPL queries and callbacks and by sending events and advancing time.
+		</p><div class="table"><a id="d0e473"/><p class="title"><b>Table 2.1. Interacting With Esper</b></p><div class="table-contents"><table summary="Interacting With Esper" border="1"><colgroup><col/><col/></colgroup><thead><tr><th>What</th><th>How</th></tr></thead><tbody><tr><td>EPL</td><td>First, deploy EPL queries, please refer to <a class="xref" href="epl_clauses.html" title="Chapter 5. EPL Reference: Clauses">Chapter 5, <i>EPL Reference: Clauses</i></a> and the API at <a class="xref" href="api.html#api-administrative" title="14.3. The Administrative Interface">Section 14.3, “The Administrative Interface”</a>.</td></tr><tr><td>Callbacks</td><td>Second, attach executable code that your application provides to receive output, please refer to <a class="xref" href="api.html#api-receive-results" title="14.3.2. Receiving Statement Results">Section 14.3.2, “Receiving Statement Results”</a>.</td></tr><tr><td>Events</td><td>Next, send events using the runtime API, please refer to <a class="xref" href="api.html#api-runtime" title="14.4. The Runtime Interface">Section 14.4, “The Runtime Interface”</a>.</td></tr><tr><td>Time</td><td>Next, advance time using the runtime API or system time, please refer to <a class="xref" href="api.html#api-controlling-time" title="14.8. Controlling Time-Keeping">Section 14.8, “Controlling Time-Keeping”</a>.</td></tr></tbody></table></div></div><br class="table-break"/><p>
+			Esper contains queries like so:
+		</p><div class="figure"><a id="processingmodel_into_querycontainerpic"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_querycontainer.png" align="middle" alt="Esper Is a Query Container"/></div></div><p class="title"><b>Figure 2.1. Esper Is a Query Container</b></p></div><br class="figure-break"/><p>
+			When time passes or an event arrives Esper evaluates only those queries that need to see such event or time. Esper analyzes EPL queries, performs query planning and utilizes data structures to avoid unneeded evaluation.
+		</p><p>
+			EPL queries can be partitioned. A partitioned query can have multiple partitions. For example, there could be partition for each room in a building. 
+			For a building with 10 rooms you could have one EPL query that has 10 partitions. Please refer to <a class="xref" href="context.html" title="Chapter 4. Context and Context Partitions">Chapter 4, <i>Context and Context Partitions</i></a>.
+		</p><p>
+			An EPL query that is not partitioned implicitly has one partition. Upon creating the un-partitioned EPL query Esper allocates the single partition. Upon destroying the un-partitioned EPL query Esper destroys the partition.
+		</p><p>
+			A partition (or <span class="emphasis"><em>context partition</em></span>) is where Esper keeps the state. In the picture above there are three un-partitioned queries and one partitioned query that has three partitions.
+		</p><p>
+			The next sections discuss various easily-understood EPL queries. 
+			The sections illustrate how queries behave, the information that Esper passes to callbacks (the output) and what information Esper remembers for queries (the <span class="emphasis"><em>state</em></span>, all state lives in a partition).
+			The sample queries assume an event type by name <code class="literal">Withdrawal</code> that has <code class="literal">account</code> and <code class="literal">amount</code> properties.
+		</p></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicselect"/>2.2. Basic Select</h2></div></div></div><p>
+			This EPL query selects all <code class="literal">Withdrawal</code> events.
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select * from Withdrawal</pre><p>
+			Upon a new <code class="literal">Withdrawal</code> event arriving, Esper passes the arriving event, unchanged and the same object reference, to callbacks.
+			After that Esper effectively forgets the current event.
+		</p><p>
+			The diagram below shows a series of <code class="literal">Withdrawal</code> events (1 to 6) arriving over time.
+			In the picture the <code class="literal">W</code><sub>n</sub> stands for a specific <code class="literal">Withdrawal</code> event arriving. The number in parenthesis is the withdrawal amount.
+		</p><div class="figure"><a id="processingmodel_into_basicselect"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicselect.png" align="middle" alt="EPL Select Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.2. EPL Select Example Input and Output Flow</b></p></div><br class="figure-break"/><p>
+			For this query, Esper remembers no information and does not remember any events. A query where Esper does not need to remember any information at all is a query without state (a <span class="emphasis"><em>stateless</em></span> query).
+		</p><p>
+			The term <span class="emphasis"><em>insert stream</em></span> is a name for the stream of new events that are arriving. The insert stream in this example is the stream of arriving Withdrawal events.
+		</p></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicaggregation"/>2.3. Basic Aggregation</h2></div></div></div><p>
+			An aggregation function is a function that groups multiple events together to form a single value. Please find more information at <a class="xref" href="functionreference.html#epl-function-aggregation" title="10.2. Aggregation Functions">Section 10.2, “Aggregation Functions”</a>.
+        </p><p>
+			This query selects a count and a total amount of all Withdrawal events.
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select count(*), sum(amount) from Withdrawal</pre><p>
+			Upon a new <code class="literal">Withdrawal</code> event arriving, Esper increments the count and adds the amount to a running total. It passes the new count and total to callbacks.
+			After that Esper effectively forgets the current event and does not remember any events at all, but does remember the current count and total.
+		</p><div class="figure"><a id="processingmodel_into_basicaggregation"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicaggregation.png" align="middle" alt="EPL Select Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.3. EPL Select Example Input and Output Flow</b></p></div><br class="figure-break"/><p>
+			Here, Esper only remembers the current number of events and the total amount. 
+			The count is a single long-type value and the total is a single double-type value (assuming <code class="literal">amount</code> is a double-value, the total can be <code class="literal">BigDecimal</code> as applicable).
+			 This query is not stateless and the state consists of a long-typed value and a double-typed value.
+		</p><p>
+			Upon a new <code class="literal">Withdrawal</code> event arriving, Esper increases the count by one and adds the amount to the running total. Esper does not re-compute the count and total because it does not remember events.
+			In general, Esper does not re-compute aggregations (unless otherwise indicated). Instead, Esper adds (increments, enters, accumulates) data to aggregation state and subtracts (decrements, removes, reduces, decreases) from aggregation state.
+		</p></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicfilter"/>2.4. Basic Filter</h2></div></div></div><p>
+			Place filter expressions in parenthesis after the event type name. For further information see <a class="xref" href="epl_clauses.html#epl-from-clause-filter" title="5.4.1. Filter-Based Event Streams">Section 5.4.1, “Filter-Based Event Streams”</a>.
+		</p><p>
+			This statement selects <code class="literal">Withdrawal</code> events that have an amount of 200 or higher:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select * from Withdrawal(amount &gt;= 200)</pre><p>
+			Upon a new <code class="literal">Withdrawal</code> event with an amount of 200 or higher arriving, Esper passes the arriving event to callbacks. 
+		</p><div class="figure"><a id="processingmodel_into_basicfilter"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicfilter.png" align="middle" alt="EPL Filter Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.4. EPL Filter Example Input and Output Flow</b></p></div><br class="figure-break"/><p>
+			For this query, Esper remembers no information and does not remember any events. 
+		</p><p>
+			You may ask what happens for <code class="literal">Withdrawal</code> events with an amount of less than 200. The answer is that the EPL query itself does not even see such events. This is because Esper knows to discard such events right away
+			and the EPL query does not even know about such events. Esper discards unneeded events very fast enabled by EPL query analysis, planning and suitable data structures.
+		</p></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicfilterwithagg"/>2.5. Basic Filter and Aggregation</h2></div></div></div><p>
+			This statement selects the count and the total amount for <code class="literal">Withdrawal</code> events that have an amount of 200 or higher:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select count(*), sum(amount) from Withdrawal(amount &gt;= 200)</pre><p>
+			Upon a new <code class="literal">Withdrawal</code> event with an amount of 200 or higher arriving, Esper increments the count and adds the amount to the running total. Esper passes the count and total to callbacks.
+		</p><div class="figure"><a id="processingmodel_into_basicfilterwithagg"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicfilteragg.png" align="middle" alt="EPL Filter and Aggregation Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.5. EPL Filter and Aggregation Example Input and Output Flow</b></p></div><br class="figure-break"/><p>
+			In this example Esper only remembers the count and total and again does not remember events. The engine discards <code class="literal">Withdrawal</code> events with an amount of less than 200.
+		</p></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicwindow"/>2.6. Basic Data Window</h2></div></div></div><p>
+			A <span class="emphasis"><em>data window</em></span>, or <span class="emphasis"><em>window</em></span> for short, retains events for the purpose of aggregation, join, match-recognize patterns, subqueries, iterating via API  and output-snapshot.
+			A data window defines which subset of events to retain. For example, a length window keeps the last N events and a time window keeps the last N seconds of events.
+			See <a class="xref" href="epl-views.html" title="Chapter 13. EPL Reference: Data Windows">Chapter 13, <i>EPL Reference: Data Windows</i></a> for details.
+		</p><p>
+			This query selects all <code class="literal">Withdrawal</code> events and instructs Esper to remember the last five events.
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select * from Withdrawal#length(5)</pre><p>
+			Upon a new <code class="literal">Withdrawal</code> event arriving, Esper adds the event to the length window. It also passes the same event to callbacks.
+		</p><div class="figure"><a id="processingmodel_into_basicdatawindow"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicwindow.png" align="middle" alt="EPL Basic Data Window Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.6. EPL Basic Data Window Example Input and Output Flow</b></p></div><br class="figure-break"/><p>
+			Upon arrival of event W<sub>6</sub>, event W<sub>1</sub> leaves the length window. We use the term <span class="emphasis"><em>expires</em></span> to say that an event leaves a data window.
+			We use the term <span class="emphasis"><em>remove stream</em></span> to describe the stream of events leaving a data window.
+		</p><p>
+			Esper remembers up to five events in total (the last five events). At the start of the query the data window is empty.
+			By itself, keeping the last five events may not sound useful. But in connection with a join, subquery or match-recognize pattern for example a data window tells the engine which events you want to query.
+		</p><div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note"><h2>Note</h2>
+			By default the engine only delivers the insert stream to listeners and observers. 
+			EPL supports optional <code class="literal">istream</code>, <code class="literal">irstream</code> and <code class="literal">rstream</code> keywords for select- and insert-into clauses to control which streams to deliver, see <a class="xref" href="epl_clauses.html#epl-select-using-istream-rstream" title="5.3.7. Selecting Insert and Remove Stream Events">Section 5.3.7, “Selecting Insert and Remove Stream Events”</a>.
+        </div></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicwindowagg"/>2.7. Basic Data Window and Aggregation</h2></div></div></div><p>
+			This query outputs the count and total of the last five <code class="literal">Withdrawal</code> events.
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select count(*), sum(amount) from Withdrawal#length(5)</pre><p>
+			Upon a new <code class="literal">Withdrawal</code> event arriving, Esper adds the event to the length window, increases the count by one and adds the amount to the current total amount. 
+			Upon a <code class="literal">Withdrawal</code> event leaving the data window, Esper decreases the count by one and subtracts its amount from the current total amount. 
+			It passes the running count and total to callbacks.
+		</p><div class="figure"><a id="processingmodel_into_basicwindowagg"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicwindowagg.png" align="middle" alt="EPL Basic Data Window and Aggregation Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.7. EPL Basic Data Window and Aggregation Example Input and Output Flow</b></p></div><br class="figure-break"/><p>
+			Before the arrival of event W<sub>6</sub> the current count is five and the running total amount is 1000. Upon arrival of event W<sub>6</sub> the following takes place:
+        </p><div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="orderedlist"><ol><li><p>
+						Esper determines that event W<sub>1</sub> leaves the length window.
+				</p></li><li><p>
+						To account for the new event W<sub>6</sub>, Esper increases the count by one and adds 300 to the running total amount.
+				</p></li><li><p>
+						To account for the expiring event W<sub>1</sub>, Esper decreases the count by one and subtracts 500 from the running total amount.
+				</p></li><li><p>
+						The output is a count of five and a total of 800 as a result of <code class="literal">1000 + 300 - 500</code>.
+				</p></li></ol></div><p>
+			Esper adds (increments, enters, accumulates) insert stream events into aggregation state and subtracts (decrements, removes, reduces, decreases) remove stream events from aggregation state.
+			It thus maintains aggregation state in an incremental fashion.
+		</p><p>
+			For this query, once the count reaches 5, the count will always remain at 5.
+		</p><p>
+			The information that Esper remembers for this query is the last five events and the current long-typed count and double-typed total.
+		</p><div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="tip"><h2>Tip</h2><p>
+				Use the <code class="literal">irstream</code> keyword to receive both the current as well as the previous aggregation value for aggregating queries.
+			</p></div></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicfilterwindowagg"/>2.8. Basic Filter, Data Window and Aggregation</h2></div></div></div><p>
+			The following query outputs the count and total of the last five <code class="literal">Withdrawal</code> events considering only those <code class="literal">Withdrawal</code> events that have an amount of at least 200:
+        </p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select count(*), sum(amount) from Withdrawal(amount&gt;=200)#length(5)</pre><p>
+			Upon a new <code class="literal">Withdrawal</code> event arriving, and only if that Withdrawal event has an amount of 200 or more, Esper adds the event to the length window, increases the count by one and adds the amount to the current total amount. 
+			Upon a <code class="literal">Withdrawal</code> event leaving the data window, Esper decreases the count by one and subtracts its amount from the current total amount. 
+			It passes the running count and total to callbacks.
+		</p><div class="figure"><a id="processingmodel_into_basicfilterwindowagg"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicfilterwindowagg.png" align="middle" alt="EPL Basic Filter, Data Window and Aggregation Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.8. EPL Basic Filter, Data Window and Aggregation Example Input and Output Flow</b></p></div><br class="figure-break"/></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicwhereclause"/>2.9. Basic Where-Clause</h2></div></div></div><p>
+			For queries without a data window, the where-clause behaves the same as the filter expressions that are placed in parenthesis.
+        </p><p>
+			The following two queries are fully equivalent because of the absence of a data window (the <code class="literal">....</code> means any select-clause expressions):
+        </p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select .... from Withdrawal(amount &gt; 200)
+// equivalent to
+select .... from Withdrawal where amount &gt; 200</pre><div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="note"><h2>Note</h2><p>
+				In Esper, the where-clause is typically used for correlation in a join or subquery. Filter expressions should be placed right after the event type name in parenthesis.
+			</p></div><p>
+			The next statement applies a where-clause to Withdrawal events. Where-clauses are discussed in more detail in <a class="xref" href="epl_clauses.html#epl-where-clause" title="5.5. Specifying Search Conditions: The Where Clause">Section 5.5, “Specifying Search Conditions: The Where Clause”</a>.
+        </p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select * from Withdrawal#length(5) where amount &gt;= 200</pre><p>
+			The where-clause applies to both new events and expiring events. Only events that pass the where-clause are passed to callbacks.
+        </p><div class="figure"><a id="processingmodel_into_basicwhere"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicwhere.png" align="middle" alt="EPL Basic Where-Clause Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.9. EPL Basic Where-Clause Example Input and Output Flow</b></p></div><br class="figure-break"/></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basictimewindow"/>2.10. Basic Time Window and Aggregation</h2></div></div></div><p>
+			A time window is a data window that extends the specified time interval into the past. More information on time windows can be found at <a class="xref" href="epl-views.html#view-win-time" title="13.3.3. Time Window (time or win:time)">Section 13.3.3, “Time Window (time or win:time)”</a>.
+        </p><p>
+			The next query selects the count and total amount of <code class="literal">Withdrawal</code> events considering the last four seconds of events.
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select count(*), total(amount) from Withdrawal#time(4)</pre><p>
+			The diagram starts at a given time <code class="literal">t</code> and displays the contents of the time window at <code class="literal">t + 4</code> and <code class="literal">t + 5 seconds</code> and so on.
+		</p><div class="figure"><a id="processingmodel_into_basictimewindow"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basictimewindowagg.png" align="middle" alt="EPL Basic Time Window Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.10. EPL Basic Time Window Example Input and Output Flow</b></p></div><br class="figure-break"/><p>
+			The activity as illustrated by the diagram:
+		</p><div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="orderedlist"><ol><li><p>
+					At time <code class="literal">t + 4 seconds</code> an event <code class="literal">W<sub>1</sub></code> arrives and the output is a count of one and a total of 500.
+				</p></li><li><p>
+					At time <code class="literal">t + 5 seconds</code> an event <code class="literal">W<sub>2</sub></code> arrives and the output is a count of two and a total of 600.
+				</p></li><li><p>
+					At time <code class="literal">t + 6.5 seconds</code> an event <code class="literal">W<sub>3</sub></code> arrives and the output is a count of three and a total of 800.
+				</p></li><li><p>
+					At time <code class="literal">t + 8 seconds</code> event <code class="literal">W<sub>1</sub></code> expires and the output is a count of two and a total of 300.
+				</p></li></ol></div><p>
+			For this query Esper remembers the last four seconds of <code class="literal">Withdrawal</code> events as well as the long-typed count and the double-typed total amount.
+		</p><div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="tip"><h2>Tip</h2><p>
+				Time can have a millisecond or microsecond resolution.
+			</p></div></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicpartition"/>2.11. Basic Partitioned Query</h2></div></div></div><p>
+			The queries discussed so far are not partitioned. A query that is not partitioned implicitly has one partition. 
+			Upon creating the un-partitioned EPL query Esper allocates the single partition and it destroys the partition when your application destroys the query.
+        </p><p>
+			A partitioned query is handy for batch processing, sessions, resetting and start/stop of your analysis. For partitioned queries you must specify a context. A context defines how partitions are allocated and destroyed.
+			Additional information about partitioned queries and contexts can be found at <a class="xref" href="context.html" title="Chapter 4. Context and Context Partitions">Chapter 4, <i>Context and Context Partitions</i></a>.
+		</p><p>
+			We shall have a single partition that starts immediately and ends after four seconds:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create context Batch4Seconds start @now end after 4 sec</pre><p>
+			The next query selects the count and total amount of <code class="literal">Withdrawal</code> events that arrived since the last reset (resets are at <code class="literal">t</code>, <code class="literal">t+4</code>, <code class="literal">t+8</code> as so on), resetting each four seconds:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">context Batch4Seconds select count(*), total(amount) from Withdrawal</pre><div class="figure"><a id="processingmodel_into_basicpartitioned"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicpartitioned.png" align="middle" alt="EPL Basic Partitioned Query Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.11. EPL Basic Partitioned Query Example Input and Output Flow</b></p></div><br class="figure-break"/><p>
+			At time <code class="literal">t + 4 seconds</code> and <code class="literal">t + 8 seconds</code> the engine destroys the current partition. This discards the current count and running total. 
+			The engine immediately allocates a new partition and the count and total start fresh at zero.
+		</p><p>
+			For this query Esper only remembers the count and running total, and the fact how long a partition lives.
+		</p></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicoutputlimited"/>2.12. Basic Output-Rate-Limited Query</h2></div></div></div><p>
+			All the previous queries had continuous output. In other words, in each of previous queries output occurred as a result of a new event arriving.
+			Use output rate limiting to output when a condition occurs, as described in <a class="xref" href="epl_clauses.html#epl-output-rate" title="5.7. Stabilizing and Controlling Output: The Output Clause">Section 5.7, “Stabilizing and Controlling Output: The Output Clause”</a>.
+		</p><p>
+			The next query outputs the last count and total of all <code class="literal">Withdrawal</code> events every four seconds:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select count(*), total(amount) from Withdrawal output last every 4 seconds</pre><div class="figure"><a id="processingmodel_into_basicoutputlimited"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicoutputratelimited.png" align="middle" alt="EPL Basic Output-Rate-Limited Query Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.12. EPL Basic Output-Rate-Limited Query Example Input and Output Flow</b></p></div><br class="figure-break"/><p>
+			At time <code class="literal">t + 4 seconds</code> and <code class="literal">t + 8 seconds</code> the engine outputs the last aggregation values to callbacks.
+		</p><p>
+			For this query Esper only remembers the count and running total, and the fact when output shall occur.
+		</p></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_basicpartitionedandoutputlimited"/>2.13. Basic Partitioned and Output-Rate-Limited Query</h2></div></div></div><p>
+			Use a partitioned query with output rate limiting to output-and-reset. This allows you to form batches, analyze a batch and then forget all such state in respect to that batch, continuing with the next batch. 
+		</p><p>
+			The next query selects the count and total amount of <code class="literal">Withdrawal</code> events that arrived within the last four seconds at the end of four seconds, resetting after output:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create context Batch4Seconds start @now end after 4 sec</pre><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">context Batch4Seconds select count(*), total(amount) from Withdrawal output last when terminated</pre><div class="figure"><a id="processingmodel_into_basicpartitionedandoutputlimited"/><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/refdoc_procmodel_basicpartitionedandoutputlimited.png" align="middle" alt="EPL Basic Partitioned and Output-Rate-Limited Query Example Input and Output Flow"/></div></div><p class="title"><b>Figure 2.13. EPL Basic Partitioned and Output-Rate-Limited Query Example Input and Output Flow</b></p></div><br class="figure-break"/><p>
+			At time <code class="literal">t + 4 seconds</code> and <code class="literal">t + 8 seconds</code> the engine outputs the last aggregation values to callbacks, and resets the current count and total.
+		</p><p>
+			For this query Esper only remembers the count and running total, and the fact when the output shall occur and how long a partition lives.
+		</p></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_namedwindows"/>2.14. Basic Named Windows and Tables</h2></div></div></div><p>
+			A named window is a global data window that can take part in many queries, and that can be selected-from, inserted- into and deleted-from by multiple EPL queries.
+			Named windows can be queried with fire-and-forget queries through the API and inward-facing JDBC driver.
+			The documentation link is <a class="xref" href="nwtable.html" title="Chapter 6. EPL Reference: Named Windows and Tables">Chapter 6, <i>EPL Reference: Named Windows and Tables</i></a>.
+		</p><p>
+			Create a named window, for example, to hold alarm information:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">create window AlertNamedWindow as (origin string, priority string, alarmNumber long)</pre><p>
+			Use on-merge to insert and update the named window.
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">on Alert as a1 merge AlertNamedWindow as a2 where a1.alarmNumber = a2.alarmNumber
+  when not matched then insert select *</pre><p>
+			The following query outputs the current count of rows in the named window:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select count(*) from AlertNamedWindow</pre><p>
+			Tables are similar to named window however have a well-defined primary-key and can share aggregated state, while named windows only share a subset of events.
+		</p></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_aggregation"/>2.15. Basic Aggregated Query Types</h2></div></div></div><p>
+			The expressions in the select-clause, the use of aggregation functions and the group-by-clause are relevant to EPL query design.
+			The overview herein is especially relevant to joins, on-trigger, output-rate-limiting and batch data windows.
+		</p><div class="itemizedlist"><ul><li><p>If your query only selects aggregation values, the engine outputs one row (or zero rows in a join).</p></li><li><p>Without a group-by clause, if your query selects non-aggregated values along with aggregation values, the engine outputs a row per event.</p></li><li><p>With a group-by clause, if your query selects non-aggregated values that are all in the group-by-clause, the engine outputs a row per group.</p></li><li><p>With a group-by clause, if your query selects non-aggregated values and not all non-aggregated values are in the group-by-clause, the engine outputs a row per event.</p></li></ul></div><p>
+			EPL allows each aggregation function to specify its own grouping criteria. Please find further information in <a class="xref" href="epl_clauses.html#epl-grouping-agglocal" title="5.6.4. Specifying Grouping for Each Aggregation Function">Section 5.6.4, “Specifying Grouping for Each Aggregation Function”</a>.
+			The documentation provides output examples for query types in <a class="xref" href="appendix_outputspec.html" title="Appendix A. Output Reference and Samples">Appendix A, <i>Output Reference and Samples</i></a>, and the next sections outlines each query type.
+		</p><p>
+			The examples below assume <code class="literal">BankInformationWindow</code> is a named window defined elsewhere.
+			The examples use a join to illustrate. Joins are further described in <a class="xref" href="epl_clauses.html#epl-join" title="5.12. Joining Event Streams">Section 5.12, “Joining Event Streams”</a>.
+		</p><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_aggregation_batch_unagg"/>2.15.1. Un-Aggregated and Un-Grouped</h3></div></div></div><p>
+				An example statement for the un-aggregated and un-grouped case is as follows:
+			</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select * from Withdrawal unidirectional, BankInformationWindow</pre><p>
+				Upon a <code class="literal">Withdrawal</code> event coming in, the number of output rows is the number of rows in the <code class="literal">BankInformationWindow</code>.
+			</p><p>
+				The appendix provides a complete example including input and output events over time at <a class="xref" href="appendix_outputspec.html#outputspec-simple" title="A.2. Output for Un-Aggregated and Un-Grouped Queries">Section A.2, “Output for Un-Aggregated and Un-Grouped Queries”</a>.
+			</p></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_aggregation_batch_full_agg"/>2.15.2. Fully Aggregated and Un-Grouped</h3></div></div></div><p>
+				If your statement only selects aggregation values and does not group, your statement may look as the example below:
+			</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select sum(amount) 
+from Withdrawal unidirectional, BankInformationWindow</pre><p>
+				Upon a <code class="literal">Withdrawal</code> event coming in, the number of output rows is always zero or one.
+			</p><p>
+				The appendix provides a complete example including input and output events over time at <a class="xref" href="appendix_outputspec.html#outputspec-rowforall" title="A.3. Output for Fully-Aggregated and Un-Grouped Queries">Section A.3, “Output for Fully-Aggregated and Un-Grouped Queries”</a>.
+			</p><p>
+				If any aggregation functions specify the <code class="literal">group_by</code> parameter and a dimension, for example <code class="literal">sum(amount, group_by:account)</code>, 
+				the query executes as an aggregated and grouped query instead.
+			</p></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_aggregation_batch_event_agg"/>2.15.3. Aggregated and Un-Grouped</h3></div></div></div><p>
+				If your statement selects non-aggregated properties and aggregation values, and does not group, your statement may be similar to this statement:
+			</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select account, sum(amount) 
+from Withdrawal unidirectional, BankInformationWindow</pre><p>
+				Upon a <code class="literal">Withdrawal</code> event coming in, the number of output rows is the number of rows in the <code class="literal">BankInformationWindow</code>.
+			</p><p>
+				The appendix provides a complete example including input and output events over time at <a class="xref" href="appendix_outputspec.html#outputspec-aggregateall" title="A.4. Output for Aggregated and Un-Grouped Queries">Section A.4, “Output for Aggregated and Un-Grouped Queries”</a>.
+			</p></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_aggregation_batch_group_agg"/>2.15.4. Fully Aggregated and Grouped</h3></div></div></div><p>
+				If your statement selects aggregation values and all non-aggregated properties in the <code class="literal">select</code> clause are listed in the <code class="literal">group by</code> clause, then your statement may look similar to this example:
+			</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select account, sum(amount) 
+from Withdrawal unidirectional, BankInformationWindow
+group by account</pre><p>
+				Upon a <code class="literal">Withdrawal</code> event coming in, the number of output rows is one row per unique account number.
+			</p><p>
+				The appendix provides a complete example including input and output events over time at <a class="xref" href="appendix_outputspec.html#outputspec-groupedrowpergroup" title="A.5. Output for Fully-Aggregated and Grouped Queries">Section A.5, “Output for Fully-Aggregated and Grouped Queries”</a>.
+			</p><p>
+				If any aggregation functions specify the <code class="literal">group_by</code> parameter and a dimension other than <code class="literal">group by</code> dimension(s), 
+				for example <code class="literal">sum(amount, group_by:accountCategory)</code>, the query executes as an aggregated and grouped query instead.
+			</p></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_aggregation_batch_event_agg_group"/>2.15.5. Aggregated and Grouped</h3></div></div></div><p>
+				If your statement selects non-aggregated properties and aggregation values, and groups only some properties using the <code class="literal">group by</code> clause,  your statement may look as below:
+			</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select account, accountName, sum(amount) 
+from Withdrawal unidirectional, BankInformationWindow
+group by account</pre><p>
+				Upon a <code class="literal">Withdrawal</code> event coming in, the number of output rows is the number of rows in the <code class="literal">BankInformationWindow</code>.
+			</p><p>
+				The appendix provides a complete example including input and output events over time at <a class="xref" href="appendix_outputspec.html#outputspec-aggregategrouped" title="A.6. Output for Aggregated and Grouped Queries">Section A.6, “Output for Aggregated and Grouped Queries”</a>.
+			</p></div></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_matchrecognizepattern"/>2.16. Basic Match-Recognize Patterns</h2></div></div></div><p>
+			Esper offers the standardized match-recognize syntax for finding patterns among events. A match-recognize pattern is very similar to a regular-expression pattern. 
+		</p><p>
+			The below query is a sample match-recognize pattern. It detects a pattern that may be present in the events held by the named window as declared above. It looks for two immediately-followed events, i.e. with no events in-between for the same origin. The first of the two events must have high priority and the second of the two events must have medium priority.
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">select * from AlertNamedWindow
+  match_recognize (
+    partition by origin
+    measures a1.origin as origin, a1.alarmNumber as alarmNumber1, a2.alarmNumber as alarmNumber2
+    pattern (a1 a2)
+    define
+      a1 as a1.priority = 'high',
+      a2 as a2.priority = 'medium'
+)</pre></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_eplpattern"/>2.17. Basic EPL Patterns</h2></div></div></div><p>
+			Esper offers the EPL pattern language, a versatile and expressive syntax for finding time and property relationships between events of many streams.
+		</p><p>
+			Event patterns match when an event or multiple events occur that match the pattern's definition, in a bottom-up fashion.
+			Pattern expressions can consist of filter expressions combined with pattern operators. Expressions can contain further nested pattern expressions by including the nested expression(s) in parenthesis.
+		</p><p>
+			There are five types of operators:
+		</p><div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="orderedlist"><ol><li><p>Operators that control pattern finder creation and termination: <code class="literal">every</code></p></li><li><p>Logical operators: <code class="literal">and</code>, <code class="literal">or</code>, <code class="literal">not</code></p></li><li><p>Temporal operators that operate on event order: <code class="literal">-&gt;</code> (the followed-by operator)</p></li><li><p>Guards are where-conditions that cause termination of pattern subexpressions, such as <code class="literal">timer:within</code></p></li><li><p>Observers that observe time events, such as <code class="literal">timer:interval</code> (an interval observer), <code class="literal">timer:at</code> (a crontab-like observer)</p></li></ol></div><p>
+			A sample pattern that alerts on each IBM stock tick with a price greater than 80 and within the next 60 seconds:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">every StockTickEvent(symbol="IBM", price&gt;80) where timer:within(60 seconds)</pre><p>
+			A sample pattern that alerts every five minutes past the hour:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">every timer:at(5, *, *, *, *)</pre><p>
+			A sample pattern that alerts when event A occurs, followed by either event B or event C:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">A -&gt; ( B or C)</pre><p>
+			A pattern where a property of a following event must match a property from the first event:
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">every a=EventX -&gt; every b=EventY(objectID=a.objectID)</pre></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_indexes"/>2.18. Basic Indexes</h2></div></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_indexes_kinds"/>2.18.1. Index Kinds</h3></div></div></div><p>
+				Esper, depending on the EPL statements, builds and maintains two kinds of indexes: filter indexes and event indexes.
+			</p><p>
+				Esper builds and maintains indexes for efficiency so as to achieve good performance.
+			</p><p>
+				The following table compares the two kinds of indexes:
+			</p><div class="table"><a id="d0e1316"/><p class="title"><b>Table 2.2. Kinds of Indexes</b></p><div class="table-contents"><table summary="Kinds of Indexes" border="1"><colgroup><col/><col/><col/></colgroup><thead><tr><th> </th><th>Filter Indexes</th><th>Event Indexes</th></tr></thead><tbody><tr><td>Improve the speed of</td><td>Matching incoming events to currently-active filters that shall process the event</td><td>Lookup of rows</td></tr><tr><td>Similar to</td><td>A structured registry of callbacks; or content-based routing</td><td>Database index</td></tr><tr><td>Index stores values of</td><td>Values provided by expressions</td><td>Values for certain column(s)</td></tr><tr><td>Index points to</td><td>Currently-active filters</td><td>Rows</td></tr><tr><td>Comparable to </td><td>A sieve or a switchboard</td><td>An index in a book</td></tr></tbody></table></div></div><br class="table-break"/></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_indexes_filterindexes"/>2.18.2. Filter Indexes</h3></div></div></div><p>
+				Filter indexes organize filters so that they can be searched efficiently. Filter indexes link back to the statement that the filter(s) come from. 
+			</p><p>
+			    We use the term <span class="emphasis"><em>filter</em></span> or <span class="emphasis"><em>filter criteria</em></span> to mean the selection predicate, such as <code class="literal">symbol=“google” and price &gt; 200 and volume &gt; 111000</code>. 
+			    Statements provide filter criteria in the <code class="literal">from</code>-clause, and/or in EPL patterns and/or in context declarations. 
+			    Please see <a class="xref" href="epl_clauses.html#epl-from-clause-filter" title="5.4.1. Filter-Based Event Streams">Section 5.4.1, “Filter-Based Event Streams”</a>, <a class="xref" href="event_patterns.html#pattern-filter" title="7.4. Filter Expressions in Patterns">Section 7.4, “Filter Expressions in Patterns”</a> and <a class="xref" href="context.html#context_def_condition_filter" title="4.2.7.1. Filter Context Condition">Section 4.2.7.1, “Filter Context Condition”</a>.
+			</p><p>
+				When the engine receives an event, it consults the filter indexes to determine which statements, if any, must process the event.
+			</p><p>
+				The purpose of filter indexes is to enable:
+			</p><div class="itemizedlist"><ul><li><p>Efficient matching of events to only those statements that need them.</p></li><li><p>Efficient discarding of events that are not needed by any statement.</p></li><li><p>Efficient evaluation with best case approximately O(1) to O(log n) i.e. in the best case executes in approximately the same time regardless of the size of the input data set  which is the number of active filters.</p></li></ul></div><p>
+				Filter index building is a result of the engine analyzing the filter criteria in the <code class="literal">from</code>-clause and also in EPL patterns. It is done automatically by the engine.
+			</p><p>
+				Esper builds and maintains separate sets of filter indexes per event type, when such event type occurs in the <code class="literal">from</code>-clause or pattern. 
+				Filter indexes are sharable within the same event type filter. Thus various <code class="literal">from</code>-clauses and patterns that refer for the same event type can contribute to the same set of filter indexes.
+			</p><p>
+				Esper builds filter indexes in a nested fashion: Filter indexes may contain further filter indexes, forming a tree-like structure, a filter index tree. The nesting of indexes is beyond the introductory discussion provided here.
+			</p><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_indexes_filterindexes_stmt"/>2.18.2.1. Filter Index Multi-Statement Example</h3></div></div></div><p>
+					The <code class="literal">from</code>-clause in a statement and, in special cases, also the <code class="literal">where</code>-clause provide filter criteria that the engine analyzes and for which it builds filter indexes.
+				</p><p>
+					For example, assume the <code class="literal">WithdrawalEvent</code> has an <code class="literal">account</code> field. You could create three EPL statements like so:
+				</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@name('A') select * from WithdrawalEvent(account = 1)</pre><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@name('B') select * from WithdrawalEvent(account = 1)</pre><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@name('C') select * from WithdrawalEvent(account = 2)</pre><p>
+					In this example, both statement A and statement B register interest in <code class="literal">WithdrawalEvent</code> events that have an <code class="literal">account</code> value of 1. 
+					Statement C registers interest in <code class="literal">WithdrawalEvent</code> events that have an <code class="literal">account</code> value of 2.
+				</p><p>
+					The below table is a sample filter index for the three statements:
+				</p><div class="table"><a id="d0e1461"/><p class="title"><b>Table 2.3. Sample Filter Index Multi-Statement Example</b></p><div class="table-contents"><table summary="Sample Filter Index Multi-Statement Example" border="1"><colgroup><col/><col/></colgroup><thead><tr><th>Value of <code class="literal">account</code></th><th>Filter</th></tr></thead><tbody><tr><td><code class="literal">1</code></td><td>Statement A, Statement B</td></tr><tr><td><code class="literal">2</code></td><td>Statement C</td></tr></tbody></table></div></div><br class="table-break"/><p>
+					When a <code class="literal">Withdrawal</code> event arrives, the engine extracts the <code class="literal">account</code> and performs a lookup into above table. 
+					If there are no matching rows in the table, for example when the <code class="literal">account</code> is 3, the engine knows that there is no further processing for the event.
+				</p></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_indexes_filterindexes_pattern"/>2.18.2.2. Filter Index Pattern Example</h3></div></div></div><p>
+					As part of a pattern you may specify event types and filter criteria. The engine analyzes patterns and determines filter criteria for filter index building. 
+				</p><p>
+					Consider the following example pattern that fires for each <code class="literal">WithdrawalEvent</code> that is followed by another <code class="literal">WithdrawalEvent</code> for the same <code class="literal">account</code> value:
+				</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@name('P') select * from pattern [every w1=WithdrawalEvent -&gt; w2=WithdrawalEvent(account = w.account)]</pre><p>
+					Upon creating the above statement, the engine starts looking for <code class="literal">WithdrawalEvent</code> events. At this time there is only one active filter:
+				</p><div class="itemizedlist"><ul><li><p>
+							 A filter looking for <code class="literal">WithdrawalEvent</code> events regardless of account id.
+						</p></li></ul></div><p>
+					Assume a <code class="literal">WithdrawalEvent</code> W<sub>a</sub> for account 1 arrives. The engine then activates a filter looking for another <code class="literal">WithdrawalEvent</code> for account 1.
+					At this time there are two active filters: 
+				</p><div class="itemizedlist"><ul><li><p>
+							 A filter looking for <code class="literal">WithdrawalEvent</code> events regardless of account id.
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=1)</code> associated to <code class="literal">w1</code>=W<sub>a</sub>.
+						</p></li></ul></div><p>
+					Assume another <code class="literal">WithdrawalEvent</code> W<sub>b</sub> for account 1 arrives. The engine then activates a filter looking for another <code class="literal">WithdrawalEvent</code> for account 1.
+					At this time there are three active filters: 
+				</p><div class="itemizedlist"><ul><li><p>
+							 A filter looking for <code class="literal">WithdrawalEvent</code> events regardless of account id.
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=1)</code> associated to <code class="literal">w1</code>=W<sub>a</sub>.
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=1)</code> associated to <code class="literal">w2</code>=W<sub>b</sub>.
+						</p></li></ul></div><p>
+					Assume another <code class="literal">WithdrawalEvent</code> W<sub>c</sub> for account 2 arrives. The engine then activates a filter looking for another <code class="literal">WithdrawalEvent</code> for account 2.
+					At this time there are four active filters:
+				</p><div class="itemizedlist"><ul><li><p>
+							 A filter looking for <code class="literal">WithdrawalEvent</code> events regardless of account id.
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=1)</code> associated to <code class="literal">w1</code>=W<sub>a</sub>.
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=1)</code> associated to <code class="literal">w1</code>=W<sub>b</sub>.
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=2)</code> associated to <code class="literal">w1</code>=W<sub>c</sub>.
+						</p></li></ul></div><p>
+					The below table is a sample filter index for the pattern after the W<sub>a</sub>, W<sub>b</sub>and W<sub>c</sub> events arrived:
+				</p><div class="table"><a id="d0e1666"/><p class="title"><b>Table 2.4. Sample Filter Index Pattern Example</b></p><div class="table-contents"><table summary="Sample Filter Index Pattern Example" border="1"><colgroup><col/><col/></colgroup><thead><tr><th>Value of <code class="literal">account</code></th><th>Filter</th></tr></thead><tbody><tr><td><code class="literal">1</code></td><td>Statement P Pattern <code class="literal">w1</code>=W<sub>a</sub>, Statement P Pattern <code class="literal">w1</code>=W<sub>b</sub></td></tr><tr><td><code class="literal">2</code></td><td>Statement P Pattern <code class="literal">w1</code>=W<sub>c</sub></td></tr></tbody></table></div></div><br class="table-break"/><p>
+					When a <code class="literal">Withdrawal</code> event arrives, the engine extracts the <code class="literal">account</code> and performs a lookup into above table. 
+					If a matching row is found, the engine can hand off the event to the relevant pattern subexpressions.
+				</p></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_indexes_filterindexes_context"/>2.18.2.3. Filter Index Context Example</h3></div></div></div><p>
+					This example is similar to the previous example of multiple statements, but instead it declares a context and associates a single statement to the context.
+				</p><p>
+					For example, assume the <code class="literal">LoginEvent</code> has an <code class="literal">account</code> field. You could declare a context initiated by a <code class="literal">LoginEvent</code> for a user:
+				</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@name('A') create context UserSession initiated by LoginEvent as loginEvent</pre><p>
+					By associating the statement to the context you can tell the engine to analze per <code class="literal">LoginEvent</code>, for example:
+				</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">@name('B') context UserSession select count(*) from WithdrawalEvent(account = context.loginEvent.account)</pre><p>
+					Upon creating the above two statements, the engine starts looking for <code class="literal">LoginEvent</code> events. At this time there is only one active filter:
+				</p><div class="itemizedlist"><ul><li><p>
+							 A filter looking for <code class="literal">LoginEvent</code> events (any account id).
+						</p></li></ul></div><p>
+					Assume a <code class="literal">LoginEvent</code> L<sub>a</sub> for account 1 arrives. The engine then activates a context partition of statement B and therefore the filter looking for <code class="literal">WithdrawalEvent</code> for account 1.
+					At this time there are two active filters: 
+				</p><div class="itemizedlist"><ul><li><p>
+							 A filter looking for <code class="literal">LoginEvent</code> events (any account id).
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=1)</code> associated to <code class="literal">loginEvent</code>=L<sub>a</sub>.
+						</p></li></ul></div><p>
+					Assume a <code class="literal">LoginEvent</code> L<sub>b</sub> for account 1 arrives. The engine then activates a context partition of statement B and therefore the filter looking for <code class="literal">WithdrawalEvent</code> for account 1.
+					At this time there are three active filters: 
+				</p><div class="itemizedlist"><ul><li><p>
+							 A filter looking for <code class="literal">LoginEvent</code> events (any account id).
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=1)</code> associated to <code class="literal">loginEvent</code>=L<sub>a</sub>.
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=1)</code> associated to <code class="literal">loginEvent</code>=L<sub>b</sub>.
+						</p></li></ul></div><p>
+					Assume a <code class="literal">LoginEvent</code> L<sub>c</sub> for account 2 arrives. The engine then activates a context partition of statement B and therefore the filter looking for <code class="literal">WithdrawalEvent</code> for account 2.
+					At this time there are four active filters: 
+				</p><div class="itemizedlist"><ul><li><p>
+							 A filter looking for <code class="literal">LoginEvent</code> events (any account id).
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=1)</code> associated to <code class="literal">loginEvent</code>=L<sub>a</sub>.
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=1)</code> associated to <code class="literal">loginEvent</code>=L<sub>b</sub>.
+						</p></li><li><p>
+							A filter looking for <code class="literal">WithdrawalEvent(account=2)</code> associated to <code class="literal">loginEvent</code>=L<sub>c</sub>.
+						</p></li></ul></div><p>
+					The below table is a sample filter index for the three statement context partitions:
+				</p><div class="table"><a id="d0e1882"/><p class="title"><b>Table 2.5. Sample Filter Index Context Example</b></p><div class="table-contents"><table summary="Sample Filter Index Context Example" border="1"><colgroup><col/><col/></colgroup><thead><tr><th>Value of <code class="literal">account</code></th><th>Filter</th></tr></thead><tbody><tr><td><code class="literal">1</code></td><td>Statement B Context Partition #0 <code class="literal">loginEvent</code>=L<sub>a</sub>, Statement B Context Partition #1 <code class="literal">loginEvent</code>=L<sub>b</sub></td></tr><tr><td><code class="literal">2</code></td><td>Statement B Context Partition #2 <code class="literal">loginEvent</code>=L<sub>c</sub></td></tr></tbody></table></div></div><br class="table-break"/><p>
+					When a <code class="literal">Withdrawal</code> event arrives, the engine extracts the <code class="literal">account</code> and performs a lookup into above table. 
+					It can then hand of the event directly to the relevant statement context partitions, or ignore the event if no rows are found for a given account id.
+				</p></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="processingmodel_indexes_eventindexes"/>2.18.3. Event Indexes</h3></div></div></div><p>
+				Event indexes organize certain columns so that they can be searched efficiently. Event indexes link back to the row that the column(s) come from.
+			</p><p>
+			    As event indexes are similar to database indexes, for this discussion, we use the term <span class="emphasis"><em>column</em></span> to mean a column in a EPL table or named window and to also mean an event property or field.
+				We use the term <span class="emphasis"><em>row</em></span> to mean a row in an EPL table or named window and to also mean an event.
+			</p><p>
+				When the engine performs statement processing it may use event indexes to find correlated rows efficiently.
+			</p><p>
+				The purpose of event indexes is to enable:
+			</p><div class="itemizedlist"><ul><li><p>Efficient evaluation of subqueries.</p></li><li><p>Efficient evaluation of joins.</p></li><li><p>Efficient evaluation of on-action statements.</p></li><li><p>Efficient evaluation of fire-and-forget queries.</p></li></ul></div><p>
+				Event index building is a result of the engine analyzing the <code class="literal">where-</code>clause correlation criteria for joins (<code class="literal">on-</code>clause for outer joins), subqueries, on-action and fire-and-forget queries.
+				It is done automatically by the engine. You may utilize the <code class="literal">create index</code> clause to explicitly index named windows and tables. You may utilize query planner hints to influence index building, use and sharing.
+			</p></div></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="processingmodel_3valuedlogic"/>2.19. Basic Null</h2></div></div></div><p>
+			EPL and SQL use a three-valued logic: besides <code class="literal">true</code> and <code class="literal">false</code>, the result of expressions can also be unknown. Three-valued logic is a consequence of supporting <code class="literal">null</code> to mark absent data. 
+			If a <code class="literal">null</code> value affects the result of a logical expression, the result is neither <code class="literal">true</code> nor <code class="literal">false</code> but unknown.
+        </p><p>
+			A <code class="literal">null</code> value basically means “could be anything”. It is therefore impossible to tell whether a comparison to <code class="literal">null</code> is <code class="literal">true</code> or <code class="literal">false</code>. 
+			That’s where the third logical value, unknown, comes in. Unknown means “true or false, depending on the null values”.
+        </p><p>
+			The result of each of the following comparisons is therefore <code class="literal">null</code> (unknown):
+		</p><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">null = 1</pre><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">null &lt;&gt; 1</pre><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">null &gt; 1</pre><pre xmlns="" xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="">null = null</pre><p>
+			Nothing <span class="emphasis"><em>equals</em></span> null. Not even <code class="literal">null</code> equals <code class="literal">null</code> because each <code class="literal">null</code> could be different. 
+			That’s why EPL has the <code class="literal">is null</code> predicate to test whether a value is null or not.
+		</p><p>
+			Credit: Above is an excerpt from an online text that can be found at <a class="link" href="http://modern-sql.com/concept/three-valued-logic" target="">http://modern-sql.com/concept/three-valued-logic</a>.
+		</p></div></div><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="gettingstarted.html"><strong>Prev</strong>Chapter 1. Getting Started</a></li><li class="up"><a accesskey="u" href="#"><strong>Top of page</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Front page</strong></a></li><li class="next"><a accesskey="n" href="event_representation.html"><strong>Next</strong>Chapter 3. Event Representations</a></li></ul></body></html>

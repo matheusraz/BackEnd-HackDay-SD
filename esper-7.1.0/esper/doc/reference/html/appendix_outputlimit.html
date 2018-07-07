@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory">Appendix B. Runtime Considerations for Output Rate Limiting</title><link rel="stylesheet" href="css/espertech.css" type="text/css"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" name="generator" content="DocBook XSL-NS Stylesheets V1.74.0"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" http-equiv="Content-Type" content="text/html; charset=UTF-8"/><link rel="home" href="index.html" title="Esper Reference"/><link rel="up" href="index.html" title="Esper Reference"/><link rel="prev" href="appendix_outputspec.html" title="Appendix A. Output Reference and Samples"/><link rel="next" href="appendix_keywords.html" title="Appendix C. Reserved Keywords"/></head><body><p xmlns:d="http://docbook.org/ns/docbook" id="title"><a href="http://www.espertech.com" class="site_href"><strong>www.espertech.com</strong></a><a href="http://www.espertech.com/esper/documentation.php" class="doc_href"><strong>Documentation</strong></a></p><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="appendix_outputspec.html"><strong>Prev</strong></a></li><li class="next"><a accesskey="n" href="appendix_keywords.html"><strong>Next</strong></a></li></ul><div class="appendix" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="appendix_outputlimit"/>Appendix B. Runtime Considerations for Output Rate Limiting</h2></div></div></div><p>
+			Output rate limiting provides output events to your application in regular intervals. Between intervals, the engine may use a buffer to hold data until the output condition is reached, as described below. 
+			If your application has high-volume streams, you may need to be mindful of the memory needs for buffers especially if the output condition triggers infrequently.
+		</p><p>
+			The <code class="literal">output</code> clause with the <code class="literal">snapshot</code> keyword does not require a buffer for any type of query.
+		</p><p>
+			The <code class="literal">output</code> clause with the <code class="literal">first</code> keyword does not require a buffer for any type of query.
+		</p><p>
+			We use the term <span class="emphasis"><em>change set</em></span> to describe all insert and remove stream events that occur since the last triggering of the output condition. 
+		</p><p>
+			You can override the default behavior for some types of queries by specifying a hint.
+		</p><p>
+			Please see <a class="xref" href="">???</a> for information on the types of queries discussed below.
+		</p><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="epl-output-unaggandungrouped"/>B.1. For Un-Aggregated and Un-Grouped Queries</h2></div></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="epl-output-unaggandungrouped-last"/>B.1.1. <code class="literal">Output Last</code></h3></div></div></div><p>
+					For queries that define <code class="literal">output last</code> the engine retains only the first remove stream event and the last insert stream event, both matching the <code class="literal">having</code>-clause, if present, 
+					to compute insert and remove stream output when the output condition triggers.
+				</p></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="epl-output-unaggandungrouped-all"/>B.1.2. <code class="literal">Output All</code></h3></div></div></div><p>
+					Without an order-by clause:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+							Upon arrival of any row the engine applies the <code class="literal">having</code>-clause and retains only matching events, or retains all events if there is no <code class="literal">having</code>-clause.
+						</p></li><li><p>
+							Upon triggering of the output condition the engine computes the insert and remove stream output events according to the <code class="literal">select</code>-clause for output.
+						</p></li></ul></div><p>
+					With an order-by clause or when your EPL specifies the <code class="literal">@Hint('disable_outputlimit_opt')</code> hint:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+								The engine retains the change set and computes output from the change set at the time the output condition triggers, after which it discards the change set.
+						</p></li></ul></div></div></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="epl-output-fullyaggandungrouped"/>B.2. For Fully Aggregated and Un-Grouped Queries</h2></div></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="epl-output-fullyaggandungrouped-last"/>B.2.1. <code class="literal">Output Last</code></h3></div></div></div><p>
+					Without an order-by clause:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+							Upon arrival of the first row since the last triggering of the output condition the engine computes the remove stream output event according to the <code class="literal">select</code>-clause 
+					for later output (when applicable).
+						</p></li><li><p>
+							Upon triggering of the output condition the engine computes the insert stream output event according to the <code class="literal">select</code>-clause for output.
+						</p></li></ul></div><p>
+					With an order-by clause or when your EPL specifies the <code class="literal">@Hint('disable_outputlimit_opt')</code> hint:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+						   The engine retains the change set and computes output from the change set at the time the output condition triggers, after which it discards the change set.
+						</p></li></ul></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="epl-output-fullyaggandungrouped-all"/>B.2.2. <code class="literal">Output All</code></h3></div></div></div><p>
+					Without an order-by clause:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+							Upon arrival of rows the engine applies the <code class="literal">having</code>-clause and computes the insert and remove stream output event according to the <code class="literal">select</code>-clause 
+					for later output (when applicable).
+						</p></li><li><p>
+							Upon triggering of the output condition the engine outputs the insert and remove stream output events.
+						</p></li></ul></div><p>
+					With an order-by clause or when your EPL specifies the <code class="literal">@Hint('disable_outputlimit_opt')</code> hint:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+								The engine retains the change set and computes output from the change set at the time the output condition triggers, after which it discards the change set.
+						</p></li></ul></div></div></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="epl-output-aggandungrouped"/>B.3. For Aggregated and Un-Grouped Queries</h2></div></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="epl-output-aggandungrouped-last"/>B.3.1. <code class="literal">Output Last</code></h3></div></div></div><p>
+					Without an order-by clause:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+							Upon arrival of the first row since the last triggering of the output condition the engine computes the insert and remove stream output event according to the 
+							<code class="literal">having</code>-clause (if present) and the <code class="literal">select</code>-clause 
+							for later output (when applicable), retaining only the last computed insert and remove stream output event.
+						</p></li><li><p>
+							Upon triggering of the output condition the engine outputs the pre-computed last insert stream and remove stream output event.
+						</p></li></ul></div><p>
+					With an order-by clause or when your EPL specifies the <code class="literal">@Hint('disable_outputlimit_opt')</code> hint:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+						   The engine retains the change set and computes output from the change set at the time the output condition triggers, after which it discards the change set.
+						</p></li></ul></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="epl-output-aggandungrouped-all"/>B.3.2. <code class="literal">Output All</code></h3></div></div></div><p>
+					Without an order-by clause:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+							Upon arrival of rows the engine computes the insert and remove stream output events according to the <code class="literal">having</code>-clause (if present) and 
+							the <code class="literal">select</code>-clause for later output, retaining only the computed insert and remove stream output events.
+						</p></li><li><p>
+							Upon triggering of the output condition the engine outputs the retained output events.
+						</p></li></ul></div><p>
+					With an order-by clause or when your EPL specifies the <code class="literal">@Hint('disable_outputlimit_opt')</code> hint:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+								The engine retains the change set and computes output from the change set at the time the output condition triggers, after which it discards the change set.
+						</p></li></ul></div></div></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="epl-output-fullyaggandgrouped"/>B.4. For Fully Aggregated and Grouped Queries (Includes Rollup)</h2></div></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="epl-output-fullyaggandgrouped-last"/>B.4.1. <code class="literal">Output Last</code></h3></div></div></div><p>
+					Without an order-by clause:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+							Upon arrival of the first row for a given group since the last triggering of the output condition the engine computes the remove stream output event for that group 
+							according to the <code class="literal">select</code>-clause 
+							for later output (when applicable), and also retains a single insert stream event per group. 
+						</p></li><li><p>
+							Upon triggering of the output condition the engine uses the retained insert stream events per group to compute output events according to the <code class="literal">select</code>-clause.
+						</p></li></ul></div><p>
+					With an order-by clause or when your EPL specifies the <code class="literal">@Hint('disable_outputlimit_opt')</code> hint:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+								The engine retains the change set and computes output from the change set at the time the output condition triggers, after which it discards the change set.
+						</p></li></ul></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="epl-output-fullyaggandgrouped-all"/>B.4.2. <code class="literal">Output All</code></h3></div></div></div><p>
+					Without an order-by clause:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+							The engine retains, for each group, a row to represent the group.
+						</p></li><li><p>
+							Upon arrival of rows the engine computes the remove stream output events according to the <code class="literal">having</code>-clause (if present) and 
+							the <code class="literal">select</code>-clause for later output. 
+						</p></li><li><p>
+							Upon triggering of the output condition the engine computes the insert stream output events according to the <code class="literal">having</code>-clause (if present) and 
+							the <code class="literal">select</code>-clause for output, for each group.
+						</p></li></ul></div><p>
+					With an order-by clause or when your EPL specifies the <code class="literal">@Hint('disable_outputlimit_opt')</code> hint:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+								The engine retains the change set and computes output from the change set at the time the output condition triggers, after which it discards the change set.
+						</p></li></ul></div></div></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="epl-output-aggandgrouped"/>B.5. For Aggregated and Grouped Queries</h2></div></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="epl-output-aggandgrouped-last"/>B.5.1. <code class="literal">Output Last</code></h3></div></div></div><p>
+					Without an order-by clause:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+							Upon arrival of the first row for a given group since the last triggering of the output condition the engine computes the insert and remove stream output event for that group 
+							according to the <code class="literal">select</code>-clause 
+							for later output (when applicable), and retains a last insert and remove stream event per group. 
+						</p></li><li><p>
+							Upon triggering of the output condition the engine outputs the retained insert and remove stream output events per group.
+						</p></li></ul></div><p>
+					With an order-by clause or when your EPL specifies the <code class="literal">@Hint('disable_outputlimit_opt')</code> hint:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+								The engine retains the change set and computes output from the change set at the time the output condition triggers, after which it discards the change set.
+						</p></li></ul></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="epl-output-aggandgrouped-all"/>B.5.2. <code class="literal">Output All</code></h3></div></div></div><p>
+					Without an order-by clause:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+							The engine retains, for each group, a row to represent the group.
+						</p></li><li><p>
+							Upon arrival of rows the engine computes the insert and remove stream output events according to the <code class="literal">having</code>-clause (if present) and 
+							the <code class="literal">select</code>-clause for later output. 
+						</p></li><li><p>
+							Upon triggering of the output condition the engine computes insert stream output events according to the <code class="literal">having</code>-clause (if present) and 
+							the <code class="literal">select</code>-clause for output for each group that does not have output events yet, and outputs all events.
+						</p></li></ul></div><p>
+					With an order-by clause or when your EPL specifies the <code class="literal">@Hint('disable_outputlimit_opt')</code> hint:
+				</p><div class="itemizedlist"><ul compact="compact"><li><p>
+								The engine retains the change set and computes output from the change set at the time the output condition triggers, after which it discards the change set.
+						</p></li></ul></div></div></div></div><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="appendix_outputspec.html"><strong>Prev</strong>Appendix A. Output Reference and Samples</a></li><li class="up"><a accesskey="u" href="#"><strong>Top of page</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Front page</strong></a></li><li class="next"><a accesskey="n" href="appendix_keywords.html"><strong>Next</strong>Appendix C. Reserved Keywords</a></li></ul></body></html>

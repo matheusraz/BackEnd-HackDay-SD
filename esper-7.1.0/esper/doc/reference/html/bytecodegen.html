@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory">Chapter 22. Byte Code Generation</title><link rel="stylesheet" href="css/espertech.css" type="text/css"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" name="generator" content="DocBook XSL-NS Stylesheets V1.74.0"/><meta xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" http-equiv="Content-Type" content="text/html; charset=UTF-8"/><link rel="home" href="index.html" title="Esper Reference"/><link rel="up" href="index.html" title="Esper Reference"/><link rel="prev" href="examples.html" title="Chapter 21. Examples, Tutorials, Case Studies"/><link rel="next" href="performance.html" title="Chapter 23. Performance"/></head><body><p xmlns:d="http://docbook.org/ns/docbook" id="title"><a href="http://www.espertech.com" class="site_href"><strong>www.espertech.com</strong></a><a href="http://www.espertech.com/esper/documentation.php" class="doc_href"><strong>Documentation</strong></a></p><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="examples.html"><strong>Prev</strong></a></li><li class="next"><a accesskey="n" href="performance.html"><strong>Next</strong></a></li></ul><div class="chapter" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="bytecodegen"/>Chapter 22. Byte Code Generation</h2></div></div></div><div class="toc"><dl><dt><span class="sect1"><a href="bytecodegen.html#bytecodegen_intro">22.1. Introduction</a></span></dt><dt><span class="sect1"><a href="bytecodegen.html#bytecodegen_usage">22.2. Usage Notes</a></span></dt><dd><dl><dt><span class="sect2"><a href="bytecodegen.html#bytecodegen_criteria">22.2.1. Criteria</a></span></dt><dt><span class="sect2"><a href="bytecodegen.html#bytecodegen_fallback">22.2.2. Fallback</a></span></dt><dt><span class="sect2"><a href="bytecodegen.html#bytecodegen_logging">22.2.3. Logging</a></span></dt><dt><span class="sect2"><a href="bytecodegen.html#bytecodegen_debugging">22.2.4. Debugging Generated Code</a></span></dt></dl></dd></dl></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="bytecodegen_intro"/>22.1. Introduction</h2></div></div></div><a id="d0e50004" class="indexterm"/><p>
+			Esper generates byte code for EPL statements. Byte code generation is a technique that blends state-of-the-art from modern compilers and MPP databases. 
+		</p><p>
+			Byte code generation can significantly speed up processing as it eliminates many virtual calls and especially megamorphic calls (a callsite with 3 or more possible implementations is megamorphic) as well as casts and branching.
+			Byte code generation allows the runtime to optimize the generated code and allows the hardware to execute faster.
+		</p><div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="tip"><h2>Tip</h2><p>
+				The engine implements the best architecture for performance engineering in data processing by performing byte code generation.
+				Not all workloads can benefit from byte code generation to the same degree. 
+			</p></div><p>
+			Byte code generation is enabled by default and can be disabled entirely. Please refer to <a class="xref" href="configuration.html#config-engine-bytecodegen" title="15.4.12. Engine Settings Related to Byte Code Generation and Compilation">Section 15.4.12, “Engine Settings Related to Byte Code Generation and Compilation”</a> for configuration options.
+		</p><p>
+			For example, consider the expression <code class="literal">a + b</code> (field <code class="literal">a</code> plus field <code class="literal">b</code>).
+			Upon creating a statement the engine performs these steps:
+		</p><div xmlns:d="http://docbook.org/ns/docbook" xmlns:rf="java:org.jboss.highlight.XhtmlRendererFactory" class="orderedlist"><ol><li><p>
+					Analyzes the expression and determines where fields <code class="literal">a</code> and <code class="literal">b</code> come from (for example event type or variable) and the field type (for example string or integer).
+				</p></li><li><p>
+					Verifies that the addition arithmetic operation can indeed be applied to the two fields. It verifies that both fields are indeed numeric and can thus be added.
+				</p></li></ol></div><p>
+			Without byte code generation, for example, in order to evaluate the expression <code class="literal">a + b</code> the VM makes 3 virtual calls: One to obtain the value of field <code class="literal">a</code>, one to obtain the value of field <code class="literal">b</code> and one to perform the <code class="literal">+</code> plus-operation.
+		</p><p>
+			With byte code generation the engine can reduce the number of virtual calls. In the best case the number of virtual calls to evaluate the <code class="literal">a + b</code> expression is one (for the invocation of the generated code itself).
+		</p><p>
+			All byte code generation takes place at time of EPL statement creation (and not at runtime).
+		</p></div><div class="sect1" lang="en-US"><div class="titlepage"><div><div><h2 class="title"><a id="bytecodegen_usage"/>22.2. Usage Notes</h2></div></div></div><a id="d0e50068" class="indexterm"/><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="bytecodegen_criteria"/>22.2.1. Criteria</h3></div></div></div><p>
+				In the default configuration, the engine generates code for: 
+			</p><div class="itemizedlist"><ul><li><p>
+						The result-set-processing including the select-clause, aggregation processing and all expressions therein, including the group-by, having-clause and order-by clause processing.
+					</p></li><li><p>
+						 All other interdependent expressions (expressions that depend on other expressions).
+					</p></li></ul></div><p>
+				The engine does not generate code for (not a comprehensive list):
+			</p><div class="itemizedlist"><ul><li><p>Constants and other expressions that can typically be evaluated with zero or very few virtual calls.</p></li><li><p>Expressions that only perform a state lookup such as the <code class="literal">prev</code> or <code class="literal">prior</code> function.</p></li></ul></div></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="bytecodegen_fallback"/>22.2.2. Fallback</h3></div></div></div><p>
+				By default, in the case that byte code generation fails, the engine logs a WARN-level message and falls back to regular evaluation, all at time of EPL statement creation.
+				Please report any stack traces as a Github issue and include the code that was produced by byte code generation as well as the EPL statement.
+				The fallback can be disabled by configuration.
+			</p></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="bytecodegen_logging"/>22.2.3. Logging</h3></div></div></div><p>
+				You can log generated classes at INFO log level by setting the configuration flag for code logging as described in <a class="xref" href="configuration.html#config-engine-logging-code" title="15.4.16.5. Byte Code Generation Logging">Section 15.4.16.5, “Byte Code Generation Logging”</a>.
+			</p><p>
+				As an alternative you can configure your log provider configuration file by setting DEBUG level for class <code class="literal">com.espertech.esper.codegen.compile.CodegenCompilerJanino</code> (provider class may change between versions).
+			</p></div><div class="sect2" lang="en-US"><div class="titlepage"><div><div><h3 class="title"><a id="bytecodegen_debugging"/>22.2.4. Debugging Generated Code</h3></div></div></div><p>
+				The information herein is for developers and is specific to the Janino compiler at the version provided with the distribution.
+			</p><p>
+				To have Janino generate classes into a given directory, define the system property <code class="literal">org.codehaus.janino.source_debugging.dir</code> to a file system directory.
+				The IDE can debug into generated classes and show the source code provided that the IDE can access the source code.
+			</p><p>
+				To include debug symbol information in the class binaries, or to include additional comments regarding the generating code itself in the generated source code, 
+				you must change the configuration as outlined in <a class="xref" href="configuration.html#config-engine-bytecodegen" title="15.4.12. Engine Settings Related to Byte Code Generation and Compilation">Section 15.4.12, “Engine Settings Related to Byte Code Generation and Compilation”</a>.
+			</p></div></div></div><ul xmlns:d="http://docbook.org/ns/docbook" class="docnav"><li class="previous"><a accesskey="p" href="examples.html"><strong>Prev</strong>Chapter 21. Examples, Tutorials, Case Studies</a></li><li class="up"><a accesskey="u" href="#"><strong>Top of page</strong></a></li><li class="home"><a accesskey="h" href="index.html"><strong>Front page</strong></a></li><li class="next"><a accesskey="n" href="performance.html"><strong>Next</strong>Chapter 23. Performance</a></li></ul></body></html>
