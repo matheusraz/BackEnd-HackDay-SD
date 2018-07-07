@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/matheusraz/BackEnd-HackDay-SD#readme",
   "dependencies": {
+    "amqplib": "^0.5.2",
     "body-parser": "^1.18.3",
     "express": "^4.16.3"
   }
