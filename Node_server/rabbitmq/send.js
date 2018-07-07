@@ -6,7 +6,7 @@ const amqp = require('amqplib/callback_api');
 setInterval(function(){
     amqp.connect('amqp://172.17.0.2', function(err, conn) {
         conn.createChannel(function(err, ch) {
-          var q = 'hello';
+          var q = 'entry';
           var msg = 'Hello World!';
       
           ch.assertQueue(q, {durable: false});
