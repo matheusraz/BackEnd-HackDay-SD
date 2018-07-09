@@ -1,14 +1,25 @@
 package cin.ufpe.rabbitmq;
 
 import com.rabbitmq.client.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Recv {
 
     private final static String QUEUE_NAME = "entry";
 
-    public static void main(String[] argv) throws Exception {
+    private List<JSONObject> data;
+
+    public Recv() throws Exception {
+        this.data = new ArrayList<>();
+        Receive();
+    }
+
+    public List<JSONObject> Receive() throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("172.17.0.2");
         Connection connection = factory.newConnection();
@@ -22,9 +33,23 @@ public class Recv {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
                     throws IOException {
                 String message = new String(body, "UTF-8");
-                System.out.println(" [x] Received '" + message + "'");
+                JSONObject json = null;
+                try {
+                    json = new JSONObject(message);
+                    data.add(json);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(json);
+
             }
         };
         channel.basicConsume(QUEUE_NAME, true, consumer);
+        return data;
+    }
+
+    public List<JSONObject> getData() {
+        return data;
     }
 }
