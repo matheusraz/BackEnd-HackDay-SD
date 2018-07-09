@@ -1,11 +1,9 @@
 package cin.ufpe.if998;
 
 
-import cin.ufpe.rabbitmq.Recv;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
-import org.json.JSONObject;
 
 
 public class BusTrackerEventHandler {
@@ -40,17 +38,11 @@ public class BusTrackerEventHandler {
 			
 		});
 
-		Recv recieve = new Recv();
-
-		for(JSONObject rec : recieve.getData()){
-			System.out.println(rec);
-		}
-
 //		engine.getEPRuntime().sendEvent(new BusTrackerEvent(3333,"E1",3333,"2018-01-20 00:39:23.670",29.3827,91.15103));
 //		engine.getEPRuntime().sendEvent(new BusTrackerEvent(3333,"E1",3333,"2018-01-20 04:48:48.073",29.3825,91.15103));
-//		engine.getEPRuntime().sendEvent(new BusTrackerEvent(3336,"E1",1626,"2018-01-20 11:27:33.480",29.2564,91.09118));
-//		engine.getEPRuntime().sendEvent(new BusTrackerEvent(3336,"E1",1626,"2018-01-20 11:28:33.117",29.2678,91.09304));
-//		engine.getEPRuntime().sendEvent(new BusTrackerEvent(12022,"E3",4608,"2018-01-20 09:05:34.510",29.1236,91.09028));
+		engine.getEPRuntime().sendEvent(new BusTrackerEvent(3336,"E1",1626,"2018-01-20 11:27:33.480",29.2564,91.09118));
+		engine.getEPRuntime().sendEvent(new BusTrackerEvent(3336,"E1",1626,"2018-01-20 11:28:33.117",29.2678,91.09304));
+		engine.getEPRuntime().sendEvent(new BusTrackerEvent(12022,"E3",4608,"2018-01-20 09:05:34.510",29.1236,91.09028));
 		
 	}		
 }
