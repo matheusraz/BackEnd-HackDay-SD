@@ -71,6 +71,18 @@ public class BusTrackerEventRMQ {
                     System.out.println("Matricula: "+bus.getMatricula()+"\nData/Hora: "+bus.getTimestamp());
                     engine.getEPRuntime().sendEvent(bus);
 
+                    JSONObject jsonA = new JSONObject();
+                    jsonA.put("time", bus.getTimestamp());
+                    jsonA.put("latitude", bus.getLatitude());
+                    jsonA.put("longitude",bus.getLongitude());
+
+                    try {
+                        Send.sendEvents(jsonA);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

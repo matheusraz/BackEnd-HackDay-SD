@@ -8,7 +8,7 @@ const start = (kompany) => {
       conn.createChannel(function(err, ch) {
         var q = 'entry';
         var msg = '';
-        
+
         const busRaw = fs.readFileSync('final.json');
         const bus = JSON.parse(busRaw);
 
@@ -21,7 +21,6 @@ const start = (kompany) => {
               ch.assertQueue(q, {durable: false});
               // Note: on Node 6 Buffer.from(msg) should be used
               ch.sendToQueue(q, new Buffer(msg));
-              console.log(" [x] Sent %s", msg);
            }
          });
       });
