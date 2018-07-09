@@ -3,11 +3,11 @@
 const amqp = require('amqplib/callback_api');
 const fs = require('fs');
 
-exports.start = start = (kompany) => {
+const start = (kompany) => {
   amqp.connect('amqp://172.17.0.2', function(err, conn) {
       conn.createChannel(function(err, ch) {
         var q = 'entry';
-        var msg = 'Hello World!';
+        var msg = '';
         
         const busRaw = fs.readFileSync('final.json');
         const bus = JSON.parse(busRaw);
@@ -27,5 +27,7 @@ exports.start = start = (kompany) => {
       });
     });
 
-    return {status: 200, message: 'ônibus identificados e infos enviadas para o Esper.'}
+    return {status: 200, message: 'ônibus identificados e infos enviadas para o Esper.'};
 }
+
+exports.start = start;
