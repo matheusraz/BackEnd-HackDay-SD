@@ -10,7 +10,9 @@ const start = () => {
       ch.assertQueue(q, {durable: false});
       console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
       ch.consume(q, function(msg) {
-        console.log(" [x] Received %s", msg.content.toString());
+        let result = msg.content.toString();
+        console.log(" [x] Received %s", result);
+        return result;
       }, {noAck: true});
     });
   });

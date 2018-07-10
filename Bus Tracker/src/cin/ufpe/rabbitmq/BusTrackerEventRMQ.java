@@ -68,7 +68,7 @@ public class BusTrackerEventRMQ {
                             (String) json.get("Instante"),
                             Double.parseDouble(String.valueOf(json.get("CoordY"))),
                             Double.parseDouble(String.valueOf(json.get("CoordX"))));
-                    System.out.println("Matricula: "+bus.getMatricula()+"\nData/Hora: "+bus.getTimestamp());
+                    //System.out.println("Matricula: "+bus.getMatricula()+"\nData/Hora: "+bus.getTimestamp());
                     engine.getEPRuntime().sendEvent(bus);
 
                     JSONObject jsonA = new JSONObject();
