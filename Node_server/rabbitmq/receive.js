@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 const amqp = require('amqplib/callback_api');
+const io = require ('socket.io').listen(8081);
+
 
 const start = () => {
     amqp.connect('amqp://172.17.0.2', function(err, conn) {
@@ -12,7 +14,6 @@ const start = () => {
       ch.consume(q, function(msg) {
         let result = msg.content.toString();
         console.log(" [x] Received %s", result);
-        return result;
       }, {noAck: true});
     });
   });

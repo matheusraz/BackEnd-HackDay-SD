@@ -71,6 +71,7 @@ module.exports = serverRouter = (server) => {
     });
 
     server.get('/sendParams/:company/:matricula', (req, res) => {
+        console.log("ENTROU");
         rmqSP.send(req.params.company, req.params.matricula);
         res.send('deu');
     });
