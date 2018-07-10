@@ -57,7 +57,7 @@ exports.carga = carga;
 
 const getAllContent = () => {
   let body = {
-    size: 700,
+    size: 1000,
     query:{
       match_all:{}
     }

@@ -17,14 +17,18 @@ const start = () => {
           let bus = result.hits.hits;
           let ind = 0;
           setInterval (() => {
-            let data = bus[ind]._source;
-            //console.log(data);
-            msg = JSON.stringify(data);
-            ch.assertQueue(q, {durable: false});
-            // Note: on Node 6 Buffer.from(msg) should be used
-            ch.sendToQueue(q, new Buffer(msg));
-            ind++;
-          }, 5*1000);
+            if(bus[ind] == undefined){
+              ind = 0;
+            } else {
+              let data = bus[ind]._source;
+              //console.log(data);
+              msg = JSON.stringify(data);
+              ch.assertQueue(q, {durable: false});
+              // Note: on Node 6 Buffer.from(msg) should be used
+              ch.sendToQueue(q, new Buffer(msg));
+              ind++;
+            }
+          }, 1*1000);
         });
 
       });

@@ -14,8 +14,7 @@ public class BusTrackerEventRMQ {
 
     private final static String QUEUE_NAME = "entry";
 
-    public static void main(String args[]) throws Exception {
-
+    public static void teste(String company, String matricula) throws Exception {
         String reciveCompany;
         long reciveMatricula;
         EPServiceProvider engine = EPServiceProviderManager.getDefaultProvider();
@@ -25,8 +24,8 @@ public class BusTrackerEventRMQ {
         //String eplc = "select nome from BusTrackerEvent";
         //selecionar os onibus das empresas
 
-        reciveCompany = "E1";
-        reciveMatricula = 1111;
+        reciveCompany = company;
+        reciveMatricula = Long.parseLong(matricula);
 
         //consultas epl
         //String eplb = "select matricula from BusTrackerEvent where nome="+reciveCompany;
@@ -42,8 +41,9 @@ public class BusTrackerEventRMQ {
             double longitude = (double) newData[0].get("longitude");
             try{
                 JSONObject jsonA = new JSONObject();
-                jsonA.put("message",String.format("O trace é: %s, com a latitude: %f e com a longitude: %f.",timestamp,latitude,longitude));
-                System.out.println("Enviado: " +jsonA.get("message"));
+                jsonA.put("time", timestamp);
+                jsonA.put("latitude", latitude);
+                jsonA.put("longitude",longitude);
                 try {
                     Send.sendEvents(jsonA);
                 } catch (Exception e) {
