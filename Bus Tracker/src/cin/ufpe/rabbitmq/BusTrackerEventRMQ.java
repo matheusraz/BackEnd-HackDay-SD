@@ -26,7 +26,7 @@ public class BusTrackerEventRMQ {
         //selecionar os onibus das empresas
 
         reciveCompany = "E1";
-        reciveMatricula = 1626;
+        reciveMatricula = 1111;
 
         //consultas epl
         //String eplb = "select matricula from BusTrackerEvent where nome="+reciveCompany;
@@ -40,7 +40,19 @@ public class BusTrackerEventRMQ {
             String timestamp = (String) newData[0].get("timestamp");
             double latitude = (double) newData[0].get("latitude");
             double longitude = (double) newData[0].get("longitude");
-            System.out.println(String.format("O trace é: %s, com a latitude: %f e com a longitude: %f.",timestamp,latitude,longitude));
+            try{
+                JSONObject jsonA = new JSONObject();
+                jsonA.put("message",String.format("O trace é: %s, com a latitude: %f e com a longitude: %f.",timestamp,latitude,longitude));
+                System.out.println("Enviado: " +jsonA.get("message"));
+                try {
+                    Send.sendEvents(jsonA);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+
             //System.out.println("A temperatura media nos ultimos 100 eventos é: "+ temperatureMedia+" °C.\n");
 
         });
@@ -71,16 +83,16 @@ public class BusTrackerEventRMQ {
                     //System.out.println("Matricula: "+bus.getMatricula()+"\nData/Hora: "+bus.getTimestamp());
                     engine.getEPRuntime().sendEvent(bus);
 
-                    JSONObject jsonA = new JSONObject();
-                    jsonA.put("time", bus.getTimestamp());
-                    jsonA.put("latitude", bus.getLatitude());
-                    jsonA.put("longitude",bus.getLongitude());
-
-                    try {
-                        Send.sendEvents(jsonA);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+//                    JSONObject jsonA = new JSONObject();
+//                    jsonA.put("time", bus.getTimestamp());
+//                    jsonA.put("latitude", bus.getLatitude());
+//                    jsonA.put("longitude",bus.getLongitude());
+//
+//                    try {
+//                        Send.sendEvents(jsonA);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
 
 
                 } catch (JSONException e) {

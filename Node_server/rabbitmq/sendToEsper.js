@@ -18,7 +18,7 @@ const start = () => {
           let ind = 0;
           setInterval (() => {
             let data = bus[ind]._source;
-            console.log(data);
+            //console.log(data);
             msg = JSON.stringify(data);
             ch.assertQueue(q, {durable: false});
             // Note: on Node 6 Buffer.from(msg) should be used
@@ -26,7 +26,6 @@ const start = () => {
             ind++;
           }, 5*1000);
         });
-        console.log("SAI DO FOR!")
 
       });
     });
